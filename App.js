@@ -1,20 +1,26 @@
 import AppLoading from "expo-app-loading";
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from "expo-status-bar";
+
 import { useState, useEffect, useCallback } from "react";
-import { Ionicons } from '@expo/vector-icons';
-import * as Font from 'expo-font';
-import { Asset } from 'expo-asset';
-import { StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import * as Font from "expo-font";
+import { Asset } from "expo-asset";
+import LoggedOutNav from "./navigators/LoggedOutNav";
+import { NavigationContainer } from "@react-navigation/native";
+import { ApolloProvider, useReactiveVar } from "@apollo/client";
+import client, { isLoggedInVar, tokenVar } from "./apollo";
+import LoggedInNav from "./navigators/LoggedInNav";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
-  const [appIsReady, setAppIsReady] = useState(false); 
+  const [appIsReady, setAppIsReady] = useState(false);
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+
   const onFinish = () => setLoading(false);
   const preload = () => {
     const fontsToLoad = [Ionicons.font];
-    const fontPromises = fontsToLoad.map(font => Font.loadAsync(font));
+    const fontPromises = fontsToLoad.map((font) => Font.loadAsync(font));
     const imagesToLoad = [require("./assets/logo.png")]; // can append server url images too!
-    const imagePromises = imagesToLoad.map(img => Asset.loadAsync(img));
+    const imagePromises = imagesToLoad.map((img) => Asset.loadAsync(img));
     return Promise.all([...fontPromises, ...imagePromises]);
   };
 
@@ -24,7 +30,7 @@ export default function App() {
         // Pre-load fonts, make any API calls you need to do here
         // (e.g) await Font.loadAsync(Entypo.font);
         await preload();
-        
+
         // Artificially delay for two seconds to simulate a slow loading
         // experience. Please remove this if you copy and paste the code!
         // (e.g) await new Promise(resolve => setTimeout(resolve, 2000));
@@ -55,18 +61,10 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <Text>Hello</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ApolloProvider client={client}>
+      <NavigationContainer>
+        {isLoggedIn ? <LoggedInNav /> : <LoggedOutNav />}
+      </NavigationContainer>
+    </ApolloProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
