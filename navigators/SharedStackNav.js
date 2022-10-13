@@ -51,6 +51,7 @@ export default function SharedStackNav({ screenName }) {
       {screenName === "ProfileLoggedOut" ? (
         <Stack.Screen name={"ProfileLoggedOut"} component={ProfileLoggedOut} />
       ) : null}
+
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="CreateAccount" component={CreateAccount} />

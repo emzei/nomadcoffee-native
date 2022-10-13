@@ -2,7 +2,7 @@ import { gql, useQuery, useReactiveVar } from "@apollo/client";
 import React from "react";
 import { Text, View } from "react-native";
 import styled from "styled-components";
-import { isLoggedInVar } from "../apollo";
+import { isLoggedInVar } from "../apollo/client";
 
 const Container = styled.View`
   background-color: black;
@@ -35,7 +35,7 @@ export const ME_QUERY = gql`
 `;
 
 export default function Me() {
-  const hasToken = useReactiveVar(isLoggedInVar);
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const { data } = useQuery(ME_QUERY, {
     skip: !hasToken,
